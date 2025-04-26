@@ -64,15 +64,20 @@ hold on;
 %背景色を追加
 xLimits = [0.171 - 0.03, 0.171 + 0.03];
 h4 = fill([-2 60 60 -2], [xLimits(1) xLimits(1) xLimits(2) xLimits(2)], ...
-     [0.7 1 0.7], 'EdgeColor', 'none', 'FaceAlpha', 0.3);  % 半透明ピンク
+     [0.5 0.5 0.5], 'EdgeColor', 'none', 'FaceAlpha', 0.3);  % 半透明ピンク
 
-h1 = plot(mocap.tra6_cam.Time-95, sqrt((mocap.tra6_cam.x_cam - x).^2 + (mocap.tra6_cam.y_cam - y).^2), ".", 'LineWidth', 1,  'Color', [0.8500 0.3250 0.0980]);
+plot(mocap.tra6_cam.Time-95, sqrt((mocap.tra6_cam.x_cam - x).^2 + (mocap.tra6_cam.y_cam - y).^2), ".", 'MarkerSize', 10,  'Color', [0.8500 0.3250 0.0980]);
 hold on;
-h2 = plot(rosbag_pp.bag03_07_21_00_32_pp.ElapsedTime+95-95, rosbag_pp.bag03_07_21_00_32_pp.distance, ".-", 'LineWidth', 2, 'Color', [0 0.4470 0.7410]);
+plot(rosbag_pp.bag03_07_21_00_32_pp.ElapsedTime+95-95, rosbag_pp.bag03_07_21_00_32_pp.distance, ".", 'MarkerSize', 10, 'Color', [0 0.4470 0.7410]);
 xline(0, "--", 'LineWidth', 2, 'Color',	[1 0 0]);
-xline(first_time, "--", 'LineWidth', 2, 'Color',	[1 0 0]);
-h3 = yline(0.171, 'LineWidth', 2, 'Color',[0.4660 0.6740 0.1880]);
-grid minor;
+xline(first_time +95-95, "--", 'LineWidth', 2, 'Color',	[1 0 0]);
+h3 = yline(0.171, 'LineWidth', 2, 'Color','k');
+grid on;
+
+%見やすいlegendをつけるために，マーカーの大きいデータをNaNとしてプロット
+nan_array = NaN(size(rosbag_pp.bag03_07_21_00_32_pp.ElapsedTime));
+h1 = plot(rosbag_pp.bag03_07_21_00_32_pp.ElapsedTime, nan_array, ".", 'MarkerSize', 30, 'Color', [0.8500 0.3250 0.0980]);
+h2 = plot(rosbag_pp.bag03_07_21_00_32_pp.ElapsedTime, nan_array, ".", 'MarkerSize', 30, 'Color', [0 0.4470 0.7410]);
 
 hold on;
 xlabel('Time [s]', 'FontSize', 20);
@@ -80,4 +85,13 @@ ylabel('Distance [m]', 'FontSize', 20);
 legend([h1 h2 h3 h4], {'Ground truth', 'Image processing', 'Target', 'Graspable area'}, 'FontSize', 20);
 set(gca, 'FontSize', 20);
 xlim([-2, 60]);
+ylim([0, 2]);
 
+% ===論文向けの枠線スタイル設定===
+ax = gca;
+ax.Box = 'on';
+ax.BoxStyle = 'full';     % 上下左右すべて実線に
+ax.XColor = 'k';          % X軸：黒
+ax.YColor = 'k';          % Y軸：黒
+ax.LineWidth = 1;       % 軸線の太さ
+%ax.TickDir = 'out';       % 目盛りを外向き（論文向き）
